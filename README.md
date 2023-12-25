@@ -2,6 +2,20 @@
 
 Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Argo CD, utilizando GitHub y DockerHub como repositorios de codigo e imagenes, respectivamente. La idea final es lograr observabilidad en cada fase del ciclo y de las diferentes metricas de interes.
 
+## Indice 
+
+- [GitOps Automation Project](#gitops-automation-project)
+  - [Indice](#indice)
+  - [Objetivos](#objetivos)
+  - [Que esperar](#que-esperar)
+  - [Tecnologias Involucradas](#tecnologias-involucradas)
+  - [GitOps](#gitops)
+    - [Ventajas de GitOps](#ventajas-de-gitops)
+    - [Kubernetes CI/CD](#kubernetes-cicd)
+  - [Instalacion y Configuracion de Herramientas](#instalacion-y-configuracion-de-herramientas)
+    - [Repositorio de Codigo](#repositorio-de-codigo)
+
+
 ## Objetivos
 
 El objetivo principal es establecer una pipeline CICD automatizada que optimice el ciclo de despliegue de software.
