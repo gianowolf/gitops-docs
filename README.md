@@ -14,9 +14,10 @@ Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Arg
     - [Kubernetes CI/CD](#kubernetes-cicd)
   - [Instalacion y Configuracion de Herramientas](#instalacion-y-configuracion-de-herramientas)
     - [Registrarse en GitHub, Bitnami y DockerHub](#registrarse-en-github-bitnami-y-dockerhub)
-    - [Instalaciones](#instalaciones)
+    - [Instalaciones en el sistema operativo](#instalaciones-en-el-sistema-operativo)
       - [Git](#git)
-    - [Repositorio de Codigo](#repositorio-de-codigo)
+      - [Docker](#docker)
+      - [Helm](#helm)
 
 ## Objetivos
 
@@ -99,6 +100,8 @@ Un ejemplo simplificado de un ciclo CI/CD explicado anteriormente se muestra a c
 
 ## Instalacion y Configuracion de Herramientas
 
+Antes de comenzar a comprender los conceptos teoricos del ciclo CI/CD y que proporciona cada herramienta dentro del mismo, instalaremos todas las dependencias del proyecto. De esta manera no obstaculizaremos el avance del proyecto enredandonos con instalaciones que pueden resultar enrevesadas en muchos casos.
+
 > Disclaimer: Las instalaciones se realizaran sobre un sistema operativo Ubuntu 22.04 en Enero 2024. Ante cualquier inconveniente se sugiere ir a la documentacion oficial de cada herramienta.
 
 ### Registrarse en GitHub, Bitnami y DockerHub
@@ -107,7 +110,9 @@ Un ejemplo simplificado de un ciclo CI/CD explicado anteriormente se muestra a c
 - Crear cuenta en [DockerHub](https://hub.docker.com/)
 - Crear cuenta en [Bitnami](https://bitnami.com/) (puede loguearse con la cuenta de GitHub creada previamente)
 
-### Instalaciones
+### Instalaciones en el sistema operativo
+
+Las siguientes herramientas se instalaran dentro del sistema operativo con el cual interactuaremos con el cluster kubernetes.
 
 #### Git
 
@@ -125,7 +130,22 @@ sudo apt install git
 git --version
 ```
 
+#### Docker
 
+Debido a que la instalacion de Docker Engine puede ser la mas compleja, dependiendo de configuraciones del sistema, se deja la [guia oficial](https://docs.docker.com/engine/install/ubuntu/) a disposicion.
 
-### Repositorio de Codigo
+#### Helm
+
+puede instalarse desde la Apt en Ubuntu
+
+```sh
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+sudo apt-get install apt-transport-https --yes
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+```
+
+Se deja la [documentacion oficial para la instalacion de Helm](https://helm.sh/docs/intro/install/).
+
 
