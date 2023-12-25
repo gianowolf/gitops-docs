@@ -2,7 +2,7 @@
 
 Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Argo CD, utilizando GitHub y DockerHub como repositorios de codigo e imagenes, respectivamente. La idea final es lograr observabilidad en cada fase del ciclo y de las diferentes metricas de interes.
 
-## Indice 
+## Indice
 
 - [GitOps Automation Project](#gitops-automation-project)
   - [Indice](#indice)
@@ -13,8 +13,10 @@ Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Arg
     - [Ventajas de GitOps](#ventajas-de-gitops)
     - [Kubernetes CI/CD](#kubernetes-cicd)
   - [Instalacion y Configuracion de Herramientas](#instalacion-y-configuracion-de-herramientas)
+    - [Registrarse en GitHub, Bitnami y DockerHub](#registrarse-en-github-bitnami-y-dockerhub)
+    - [Instalaciones](#instalaciones)
+      - [Git](#git)
     - [Repositorio de Codigo](#repositorio-de-codigo)
-
 
 ## Objetivos
 
@@ -26,15 +28,17 @@ En este repositorio encontraras informacion detallada de cada tecnologia y paso 
 
 ## Tecnologias Involucradas
 
-- GitHub: Plataforma central para el control de versiones y la colaboración en el desarrollo de software.
+- **Git**: Sistema de control de versiones distribuido.
+- **GitHub**: Plataforma para el control de versiones con Git.
 - **Docker**: Tecnología utilizada para la creación, implementación y gestión de contenedores.
-- **DockerHub**: Plataforma para alojar imágenes de contenedores Docker, facilitando su distribución.
-- **Kubernetes**: Plataforma de código abierto para automatizar la implementación, escalado y gestión de aplicaciones en contenedores. Kubernetes facilita la gestión de múltiples contenedores, proporcionando capacidades avanzadas de orquestación, automatización y escalabilidad para aplicaciones en entornos de producción.- **Minikube**: Herramienta que permite crear clústeres de Kubernetes locales para pruebas y desarrollo.
+- **DockerHub**: Plataforma para alojar imágenes de contenedores Docker, facilitando su distribución y uso.
+- **Kubernetes**: Kubernetes facilita la gestión de múltiples contenedores, proporcionando capacidades avanzadas de orquestación, automatización y escalabilidad para aplicaciones en entornos de producción.
 - **Minikube**: Herramienta que permite crear clústeres de Kubernetes locales para pruebas y desarrollo.
 - **Helm**: Gestor de paquetes de Kubernetes que simplifica y automatiza tareas de implementación.
 - **Bitnami**: Bitnami contribuye con una extensa colección de charts de Helm, simplificando la implementación de aplicaciones complejas en Kubernetes al ofrecer configuraciones predefinidas y listas para usar.
 - **Argo** **Workflows**: Orquestador de flujos de trabajo complejos dentro de Kubernetes.
 - **Argo** **CD**: Herramienta que facilita la implementación continua basada en GitOps para Kubernetes.
+- **HashiCorp Vault**: Gestion de Secrets para Kubernetes
 - **Grafana**: Plataforma para monitorear y visualizar datos provenientes de diversas fuentes.
 - **Prometheus**: Sistema de monitorización y alerta de código abierto que recopila métricas de sistemas y servicios.
 
@@ -94,6 +98,34 @@ Un ejemplo simplificado de un ciclo CI/CD explicado anteriormente se muestra a c
 ![cicd practico](img/githubpractico.png)
 
 ## Instalacion y Configuracion de Herramientas
+
+> Disclaimer: Las instalaciones se realizaran sobre un sistema operativo Ubuntu 22.04 en Enero 2024. Ante cualquier inconveniente se sugiere ir a la documentacion oficial de cada herramienta.
+
+### Registrarse en GitHub, Bitnami y DockerHub
+
+- Crear cuenta en [GitHub](https://github.com/)
+- Crear cuenta en [DockerHub](https://hub.docker.com/)
+- Crear cuenta en [Bitnami](https://bitnami.com/) (puede loguearse con la cuenta de GitHub creada previamente)
+
+### Instalaciones
+
+#### Git
+
+Verificar si tenemos git instalado 
+
+```sh
+git --version
+```
+
+De lo contrario 
+
+```sh
+sudo apt update
+sudo apt install git
+git --version
+```
+
+
 
 ### Repositorio de Codigo
 
