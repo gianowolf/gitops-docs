@@ -24,6 +24,10 @@ Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Arg
       - [Helm](#helm)
     - [Checkeo de instalaciones](#checkeo-de-instalaciones)
     - [Instalaciones de Herramientas CI/CD](#instalaciones-de-herramientas-cicd)
+      - [Instalacion Argo Workflows](#instalacion-argo-workflows)
+    - [Instalacion ArgoCD](#instalacion-argocd)
+    - [Instalacion ArgoCD UI y Argo Workflowss UI](#instalacion-argocd-ui-y-argo-workflowss-ui)
+    - [Instalacion HashiCorp Vault](#instalacion-hashicorp-vault)
 
 ## Objetivos
 
@@ -247,3 +251,154 @@ Ya tenemos todas las herramientas instaladas en nuestro sistema operativo. Ahora
 
 > Disclaimer: Esta **no** es una guia de Kubernetes, y se requieren conocimientos basicos previos para que el presente documento no resulte confuso.
 
+Vamos a ver que rol cumple cada herramienta dentro del ciclo y como utilizarla mas adelante, por lo que ahora nos limitaremos con una breve descripcion y su instalacion.
+
+> **!!! IMPORTANTE**: Para todas estas instalaciones es necesario tener en ejecucion minikube mediante el comando `minikube start`
+> 
+#### Instalacion Argo Workflows
+
+Argo Workflows es una herramienta de codigo abierto que nos permite definir flujos de trabajo en Kubernetes. De esta manera podemos disenar pipelines CI complejas que compilan, testean y despliegan la aplicacion y la imagen del contenedor.
+
+Para instalar Argo Workflows seguiremos la [guia de instalacion de la pagina oficial](https://argoproj.github.io/argo-workflows/quick-start/).
+
+Durante la realizacion de esta guia la ultima version de argo es v3.5.2 por lo cual ejecutamos los siguientes comandos:
+
+```sh
+kubectl create namespace argo
+kubectl apply -n argo -f https://github.com/argoproj/argo-workflows/releases/download/v3.5.2/install.yaml
+```
+
+Luego instalaremos Argo Workflow CLI siguiendo la [guia de instalacion oficial.](https://github.com/argoproj/argo-workflows/releases/)
+
+```sh
+# Download the binary
+curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.5.2/argo-linux-amd64.gz
+
+# Unzip
+gunzip argo-linux-amd64.gz
+
+# Make binary executable
+chmod +x argo-linux-amd64
+
+# Move binary to path
+mv ./argo-linux-amd64 /usr/local/bin/argo
+
+# Test installation
+argo version
+```
+
+### Instalacion ArgoCD
+
+```sh
+kubectl create ns argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.5.8/manifests/install.yaml
+```
+
+verificamos la instalacion 
+
+```sh
+kubectl get all -n argocd
+```
+
+### Instalacion ArgoCD UI y Argo Workflowss UI
+
+Podemos utiliazr la interface de usuario de ArgoCD y Argo Workflows
+
+```sh
+# ArgoCD UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# Argo Workflows UI
+kubectl -n argo port-forward deployment/argo-server 2746:2746
+```
+
+podemos acceder a ArgoCD UI y Argo Workflows UI mediante `https://localhost:8080/` y `https://localhost:2747`, respectivamente.
+
+### Instalacion HashiCorp Vault
+
+```sh
+kubectl create ns vault
+```
+
+Agregamos el repositorio de Vault a Helm
+
+```sh
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo update
+
+# Verificamos la instalacion buscando el chart de vault
+helm search repo hashicorp/vault
+```
+
+Creamos un archivo llamado `helm-vault-raft-values.yml`:
+
+```sh
+cat > helm-vault-raft-values.yml <<EOF
+server:
+  affinity: ""
+  ha:
+    enabled: true
+    raft: 
+      enabled: true
+EOF
+```
+
+Instalamos via Helm y reemplazamos con los valores que especificamos en el archivo creado anteriormente.
+
+```sh
+helm install vault hashicorp/vault --values helm-vault-raft-values.yml
+```
+
+Esto creara tres pods con los nombres `vault-0`, `vault-1` y `vault-2`. Verificamos su estado a traves del comando:
+
+```sh
+kubectl get pods
+```
+
+Al cabo de unos minutos deberian mostrar el estado *Running*
+
+```sh
+vault-0                                 0/1     Running   0             2m13s
+vault-1                                 0/1     Running   0             2m13s
+vault-2                                 0/1     Running   0             2m13s
+vault-agent-injector-6454d7c5b9-7v4h6   1/1     Running   0             2m14s
+```
+
+Inicializamos `vault-0` 
+
+```sh
+kubectl exec vault-0 -- vault operator init \
+    -key-shares=1 \
+    -key-threshold=1 \
+    -format=json > cluster-keys.json
+```
+
+el comando `operator init` genera una key *root* y que establece el numero de claves necesarias para desbloquear Vault.
+
+Observamos la key mediante el comando `jq` para archivos json:
+
+```sh
+jq -r ".unseal_keys_b64[]" cluster-keys.json
+```
+
+Creamos una variable de entorno llamada `VAULT_UNSEAL_KEY` con la key generada anteriormente
+
+```sh
+VAULT_UNSEAL_KEY=$(jq -r ".unseal_keys_b64[]" cluster-keys.json)
+```
+
+desbloqueamos el Vault del pod `vault-0`
+
+kubectl exec vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
+
+```sh
+kubectl exec -ti vault-1 -- vault operator raft join http://vault-0.vault-internal:8200
+
+kubectl exec -ti vault-2 -- vault operator raft join http://vault-0.vault-internal:8200
+```
+
+utilizamos la key para desbloquear vault-1
+
+```sh
+kubectl exec -ti vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+```
