@@ -17,6 +17,8 @@ Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Arg
     - [Instalaciones en el sistema operativo](#instalaciones-en-el-sistema-operativo)
       - [Git](#git)
       - [Docker](#docker)
+      - [MiniKube](#minikube)
+      - [kubectl](#kubectl)
       - [Helm](#helm)
 
 ## Objetivos
@@ -116,7 +118,7 @@ Las siguientes herramientas se instalaran dentro del sistema operativo con el cu
 
 #### Git
 
-Verificar si tenemos git instalado 
+Git es el sistema de control de versiones que nos permite gestionar los cambios en el codigo al desarrollar software. Como su nombre lo indica, es la esencia misma de la metodologia GitOps, ya que en el control de versiones, colaboracion, automatizacion y gestion de cambios son la base de esta.
 
 ```sh
 git --version
@@ -132,7 +134,18 @@ git --version
 
 #### Docker
 
+Docker nos permite encapsular (*containerization*) aplicaciones y servicios en contenedores, permitiendo portabilidad y consistencia del entorno. Estas aplicaciones encapsuladas en contenedores seran almacenadas en registros de imagenes (DockerHub) y se ejecutaran en un orquestador de contenedores (Kubernetes).
+
 Debido a que la instalacion de Docker Engine puede ser la mas compleja, dependiendo de configuraciones del sistema, se deja la [guia oficial](https://docs.docker.com/engine/install/ubuntu/) a disposicion.
+
+#### MiniKube
+
+Minikube es una herramienta que simplifica la ejecucion de un cluster Kubernetes de forma local, por lo que nos permite traajar en un ambiente Kubernetes en nuestra computadora sin las dificultades de configurar un cluster remoto.
+
+#### kubectl
+
+kubectl (de Kubernetes Controller) es una herramienta CLI (*Command Line Interface*) que nos permite interactuar y gestionar con clusteres Kubernetes. En este caso debemos interactuar con minikube, nuestro Kubernetes instalado de forma local previamente.
+
 
 #### Helm
 
