@@ -8,6 +8,7 @@ Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Arg
   - [Indice](#indice)
   - [Objetivos](#objetivos)
   - [Que esperar](#que-esperar)
+  - [Que NO esperar](#que-no-esperar)
   - [Tecnologias Involucradas](#tecnologias-involucradas)
   - [GitOps](#gitops)
     - [Ventajas de GitOps](#ventajas-de-gitops)
@@ -19,7 +20,14 @@ Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Arg
       - [Docker](#docker)
       - [MiniKube](#minikube)
       - [kubectl](#kubectl)
+      - [Configuracion Minikube-kubectl](#configuracion-minikube-kubectl)
       - [Helm](#helm)
+    - [Checkeo de instalaciones](#checkeo-de-instalaciones)
+    - [Instalaciones de Herramientas CI/CD](#instalaciones-de-herramientas-cicd)
+      - [Instalacion Argo Workflows](#instalacion-argo-workflows)
+    - [Instalacion ArgoCD](#instalacion-argocd)
+    - [Instalacion ArgoCD UI y Argo Workflowss UI](#instalacion-argocd-ui-y-argo-workflowss-ui)
+    - [Instalacion HashiCorp Vault](#instalacion-hashicorp-vault)
   - [Conceptos Basicos](#conceptos-basicos)
     - [Necesidad y Objetivos de Automatizar Procesos](#necesidad-y-objetivos-de-automatizar-procesos)
     - [CI](#ci)
@@ -32,6 +40,16 @@ El objetivo principal es establecer una pipeline CICD automatizada que optimice 
 
 En este repositorio encontraras informacion detallada de cada tecnologia y paso involucrados en el ciclo CI/CD, meticulosamente documentado y explicado.
 
+## Que NO esperar 
+
+- Esta **no** es una guia de aprendizaje de **Linux**.
+- Esta **no** es una guia de aprendizaje de lenguajes de **programacion**.
+- Esta **no** es una guia de aprendizaje de **Docker**.
+- Esta **no** es una guia de aprendizaje de **Kubernetes**.
+- Esta **no** es una guia de aprendizaje de Ingenieria de **Observabilidad**.
+
+Si bien se utilizan todas estas tecnologias, se desean conocimientos previos basicos de Linux y Kubernetes, ya que las herramientas instaladas para la automatizacion del ciclo CI/CD corren sobre estas plataformas.
+  
 ## Tecnologias Involucradas
 
 - **Git**: Sistema de control de versiones distribuido.
@@ -107,6 +125,8 @@ Un ejemplo simplificado de un ciclo CI/CD explicado anteriormente se muestra a c
 
 Antes de comenzar a comprender los conceptos teoricos del ciclo CI/CD y que proporciona cada herramienta dentro del mismo, instalaremos todas las dependencias del proyecto. De esta manera no obstaculizaremos el avance del proyecto enredandonos con instalaciones que pueden resultar enrevesadas en muchos casos.
 
+Al principio puede resultar tedioso realizar todas las instalaciones de una vez, pero trabajar en un entorno con todas las dependencias disponibles simplifica el proceso de aprendizaje notoriamente.
+
 > Disclaimer: Las instalaciones se realizaran sobre un sistema operativo Ubuntu 22.04 en Enero 2024. Ante cualquier inconveniente se sugiere ir a la documentacion oficial de cada herramienta.
 
 ### Registrarse en GitHub, Bitnami y DockerHub
@@ -123,11 +143,13 @@ Las siguientes herramientas se instalaran dentro del sistema operativo con el cu
 
 Git es el sistema de control de versiones que nos permite gestionar los cambios en el codigo al desarrollar software. Como su nombre lo indica, es la esencia misma de la metodologia GitOps, ya que en el control de versiones, colaboracion, automatizacion y gestion de cambios son la base de esta.
 
+La mayoria de las distribuciones de Linux actuales disponen de Git. Podemos compprobarlo de la siguiente manera:
+
 ```sh
 git --version
 ```
 
-De lo contrario 
+Si el comando resulta desconocido procedemos a instalarlo:
 
 ```sh
 sudo apt update
@@ -145,9 +167,44 @@ Debido a que la instalacion de Docker Engine puede ser la mas compleja, dependie
 
 Minikube es una herramienta que simplifica la ejecucion de un cluster Kubernetes de forma local, por lo que nos permite traajar en un ambiente Kubernetes en nuestra computadora sin las dificultades de configurar un cluster remoto.
 
+```sh
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+```
+
+Ante cualquier inconveniente se adjunta la [guia de instalacion](https://minikube.sigs.k8s.io/docs/start/)
+
 #### kubectl
 
 kubectl (de Kubernetes Controller) es una herramienta CLI (*Command Line Interface*) que nos permite interactuar y gestionar con clusteres Kubernetes. En este caso debemos interactuar con minikube, nuestro Kubernetes instalado de forma local previamente.
+
+```sh
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+```
+
+o podemos utilizar snap
+
+```sh
+snap install kubectl --classic
+kubectl version --client
+```
+
+verificamos la instalacion
+
+```sh
+kubectl version
+```
+
+#### Configuracion Minikube-kubectl
+
+Para simplificar el uso de `minikube`con `kubectl` podemos agregar el siguiente *alias* al archivo de configuracion del shell que estemos usando 
+
+```sh
+alias kubectl="minikube kubectl --"
+```
 
 #### Helm
 
@@ -162,6 +219,193 @@ sudo apt-get install helm
 ```
 
 Se deja la [documentacion oficial para la instalacion de Helm](https://helm.sh/docs/intro/install/).
+
+
+### Checkeo de instalaciones
+
+Una vez realizada las instalaciones, podemos proceder a comprobar si se instalaron correctamente
+
+```sh
+git version
+docker version
+kubectl version
+minikube version
+helm version
+```
+
+Si ningun comando resulta desconocido para la *shell*, ya estamos listo para **iniciar nuestro cluster minikube**
+
+```sh
+minikube start
+```
+
+```sh
+kubectl get namespaces
+```
+
+Podemos observar el estado del cluster y de los recursos en el, de manera visual a traves de *minikube dashboard*
+
+```sh
+minikube dashboard
+```
+
+### Instalaciones de Herramientas CI/CD
+
+Ya tenemos todas las herramientas instaladas en nuestro sistema operativo. Ahora nos toca instalar software en nuestor cluster Kubernetes (minikube).
+
+> Disclaimer: Esta **no** es una guia de Kubernetes, y se requieren conocimientos basicos previos para que el presente documento no resulte confuso.
+
+Vamos a ver que rol cumple cada herramienta dentro del ciclo y como utilizarla mas adelante, por lo que ahora nos limitaremos con una breve descripcion y su instalacion.
+
+> **!!! IMPORTANTE**: Para todas estas instalaciones es necesario tener en ejecucion minikube mediante el comando `minikube start`
+> 
+#### Instalacion Argo Workflows
+
+Argo Workflows es una herramienta de codigo abierto que nos permite definir flujos de trabajo en Kubernetes. De esta manera podemos disenar pipelines CI complejas que compilan, testean y despliegan la aplicacion y la imagen del contenedor.
+
+Para instalar Argo Workflows seguiremos la [guia de instalacion de la pagina oficial](https://argoproj.github.io/argo-workflows/quick-start/).
+
+Durante la realizacion de esta guia la ultima version de argo es v3.5.2 por lo cual ejecutamos los siguientes comandos:
+
+```sh
+kubectl create namespace argo
+kubectl apply -n argo -f https://github.com/argoproj/argo-workflows/releases/download/v3.5.2/install.yaml
+```
+
+Luego instalaremos Argo Workflow CLI siguiendo la [guia de instalacion oficial.](https://github.com/argoproj/argo-workflows/releases/)
+
+```sh
+# Download the binary
+curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.5.2/argo-linux-amd64.gz
+
+# Unzip
+gunzip argo-linux-amd64.gz
+
+# Make binary executable
+chmod +x argo-linux-amd64
+
+# Move binary to path
+mv ./argo-linux-amd64 /usr/local/bin/argo
+
+# Test installation
+argo version
+```
+
+### Instalacion ArgoCD
+
+```sh
+kubectl create ns argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.5.8/manifests/install.yaml
+```
+
+verificamos la instalacion 
+
+```sh
+kubectl get all -n argocd
+```
+
+### Instalacion ArgoCD UI y Argo Workflowss UI
+
+Podemos utiliazr la interface de usuario de ArgoCD y Argo Workflows
+
+```sh
+# ArgoCD UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# Argo Workflows UI
+kubectl -n argo port-forward deployment/argo-server 2746:2746
+```
+
+podemos acceder a ArgoCD UI y Argo Workflows UI mediante `https://localhost:8080/` y `https://localhost:2747`, respectivamente.
+
+### Instalacion HashiCorp Vault
+
+```sh
+kubectl create ns vault
+```
+
+Agregamos el repositorio de Vault a Helm
+
+```sh
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo update
+
+# Verificamos la instalacion buscando el chart de vault
+helm search repo hashicorp/vault
+```
+
+Creamos un archivo llamado `helm-vault-raft-values.yml`:
+
+```sh
+cat > helm-vault-raft-values.yml <<EOF
+server:
+  affinity: ""
+  ha:
+    enabled: true
+    raft: 
+      enabled: true
+EOF
+```
+
+Instalamos via Helm y reemplazamos con los valores que especificamos en el archivo creado anteriormente.
+
+```sh
+helm install vault hashicorp/vault --values helm-vault-raft-values.yml
+```
+
+Esto creara tres pods con los nombres `vault-0`, `vault-1` y `vault-2`. Verificamos su estado a traves del comando:
+
+```sh
+kubectl get pods
+```
+
+Al cabo de unos minutos deberian mostrar el estado *Running*
+
+```sh
+vault-0                                 0/1     Running   0             2m13s
+vault-1                                 0/1     Running   0             2m13s
+vault-2                                 0/1     Running   0             2m13s
+vault-agent-injector-6454d7c5b9-7v4h6   1/1     Running   0             2m14s
+```
+
+Inicializamos `vault-0` 
+
+```sh
+kubectl exec vault-0 -- vault operator init \
+    -key-shares=1 \
+    -key-threshold=1 \
+    -format=json > cluster-keys.json
+```
+
+el comando `operator init` genera una key *root* y que establece el numero de claves necesarias para desbloquear Vault.
+
+Observamos la key mediante el comando `jq` para archivos json:
+
+```sh
+jq -r ".unseal_keys_b64[]" cluster-keys.json
+```
+
+Creamos una variable de entorno llamada `VAULT_UNSEAL_KEY` con la key generada anteriormente
+
+```sh
+VAULT_UNSEAL_KEY=$(jq -r ".unseal_keys_b64[]" cluster-keys.json)
+```
+
+desbloqueamos el Vault del pod `vault-0`
+
+kubectl exec vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
+
+```sh
+kubectl exec -ti vault-1 -- vault operator raft join http://vault-0.vault-internal:8200
+
+kubectl exec -ti vault-2 -- vault operator raft join http://vault-0.vault-internal:8200
+```
+
+utilizamos la key para desbloquear vault-1
+
+```sh
+kubectl exec -ti vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+```
 
 ## Conceptos Basicos
 
