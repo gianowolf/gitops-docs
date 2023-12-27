@@ -20,6 +20,9 @@ Projecto de automatizacion de ciclo CI/CD en Kubernetes con Argo Workflows y Arg
       - [MiniKube](#minikube)
       - [kubectl](#kubectl)
       - [Helm](#helm)
+  - [Conceptos Basicos](#conceptos-basicos)
+    - [Necesidad y Objetivos de Automatizar Procesos](#necesidad-y-objetivos-de-automatizar-procesos)
+    - [CI](#ci)
 
 ## Objetivos
 
@@ -146,7 +149,6 @@ Minikube es una herramienta que simplifica la ejecucion de un cluster Kubernetes
 
 kubectl (de Kubernetes Controller) es una herramienta CLI (*Command Line Interface*) que nos permite interactuar y gestionar con clusteres Kubernetes. En este caso debemos interactuar con minikube, nuestro Kubernetes instalado de forma local previamente.
 
-
 #### Helm
 
 puede instalarse desde la Apt en Ubuntu
@@ -161,4 +163,16 @@ sudo apt-get install helm
 
 Se deja la [documentacion oficial para la instalacion de Helm](https://helm.sh/docs/intro/install/).
 
+## Conceptos Basicos
 
+Antes de empezar a automatizar despliegues, es necesario entender que tecnologias estan involucradas, y como explotar sus ventajas. Muchas veces utilizamos tecnologias unicamente.
+
+### Necesidad y Objetivos de Automatizar Procesos
+
+Existen numerosas causas por las cuales implementar el proceso de entrega de software mediante una pipeline CI/CD. Podemos nombrar desde incrementar la velocidad, reducir intervenciones manuales, simplificar la resolucion de errores, reducir costos, mejorar el feedback del equipo, detectar problemas con mayor anterioridad, entre muchisimas otras.
+
+Podriamos seguir enumerando, pero basicamente una pipeline CI/CD automatizada tiene todas las ventajas de la automatizar procesos en cualquier industria: Costos, calidad y eficiencia. No queremos perder horas de trabajo en comunicaciones, mails, configuraciones manuales y monitoreo activo. Nuestra meta es automatizar todo lo que sea posible.
+
+### CI
+
+Tenemos el codigo fuente de nuestra aplicacion. Queremos que nuestra aplicacion este preparada para desplegarse en un ambiente *Cloud Native*. Un proceso manual seria empaquetar la aplicacion y buildear el contenedor fuera del cluster, subirlo a un registro de contenedores, y desde un Kuebernetes Deployment referenciarlo.
