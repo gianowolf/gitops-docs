@@ -40,7 +40,7 @@ El objetivo principal es establecer una pipeline CICD automatizada que optimice 
 
 En este repositorio encontraras informacion detallada de cada tecnologia y paso involucrados en el ciclo CI/CD, meticulosamente documentado y explicado.
 
-## Que NO esperar 
+## Que NO esperar
 
 - Esta **no** es una guia de aprendizaje de **Linux**.
 - Esta **no** es una guia de aprendizaje de lenguajes de **programacion**.
@@ -115,7 +115,7 @@ A continuacion se explican las palabras claves del texto anterior:
 - **Repositorio de imágenes de contenedor:** Lugar donde se almacenan y organizan las imágenes de contenedor, por ejemploDockerHub. Estos repositorios permiten subir, descargar y gestionar imágenes de contenedor, lo que facilita la distribución y la implementación de aplicaciones en entornos basados en contenedores, por ejemplo un cluster Kubernetes.
 ```
 
-Un ejemplo simplificado de un ciclo CI/CD explicado anteriormente se muestra a continuacion 
+Un ejemplo simplificado de un ciclo CI/CD explicado anteriormente se muestra a continuacion
 
 ![cicd teorico](img/githubteorico.png)
 
@@ -200,7 +200,7 @@ kubectl version
 
 #### Configuracion Minikube-kubectl
 
-Para simplificar el uso de `minikube`con `kubectl` podemos agregar el siguiente *alias* al archivo de configuracion del shell que estemos usando 
+Para simplificar el uso de `minikube`con `kubectl` podemos agregar el siguiente *alias* al archivo de configuracion del shell que estemos usando
 
 ```sh
 alias kubectl="minikube kubectl --"
@@ -219,7 +219,6 @@ sudo apt-get install helm
 ```
 
 Se deja la [documentacion oficial para la instalacion de Helm](https://helm.sh/docs/intro/install/).
-
 
 ### Checkeo de instalaciones
 
@@ -258,7 +257,7 @@ Ya tenemos todas las herramientas instaladas en nuestro sistema operativo. Ahora
 Vamos a ver que rol cumple cada herramienta dentro del ciclo y como utilizarla mas adelante, por lo que ahora nos limitaremos con una breve descripcion y su instalacion.
 
 > **!!! IMPORTANTE**: Para todas estas instalaciones es necesario tener en ejecucion minikube mediante el comando `minikube start`
-> 
+
 #### Instalacion Argo Workflows
 
 Argo Workflows es una herramienta de codigo abierto que nos permite definir flujos de trabajo en Kubernetes. De esta manera podemos disenar pipelines CI complejas que compilan, testean y despliegan la aplicacion y la imagen del contenedor.
@@ -298,7 +297,7 @@ kubectl create ns argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.5.8/manifests/install.yaml
 ```
 
-verificamos la instalacion 
+verificamos la instalacion
 
 ```sh
 kubectl get all -n argocd
@@ -368,7 +367,7 @@ vault-2                                 0/1     Running   0             2m13s
 vault-agent-injector-6454d7c5b9-7v4h6   1/1     Running   0             2m14s
 ```
 
-Inicializamos `vault-0` 
+Inicializamos `vault-0`
 
 ```sh
 kubectl exec vault-0 -- vault operator init \
